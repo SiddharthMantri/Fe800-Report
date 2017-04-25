@@ -42,14 +42,17 @@ The paper is organized as follows. First we give an insight about the concepts w
 
 \section{Basic Concepts}
 \subsection{Exchange Traded Funds and Leveraged ETFs}
-An Exchange Traded Fund (ETF) is a security that is designed to track an index. Unlike mutual funds, an ETF is traded like common stock on a stock exchange. \citep{ref2}
+An Exchange Traded Fund (ETF) is a security that is designed to track an index. Unlike mutual funds, an ETF is traded like common stock on a stock exchange.\citep{ref2} In the simplest terms, Exchange Traded Funds (ETFs) are funds that track indexes like the NASDAQ-100 Index, S&P 500, Dow Jones, etc. When you buy shares of an ETF, you are buying shares of a portfolio that tracks the yield and return of its native index. The main difference between ETFs and other types of index funds is that ETFs don't try to outperform their corresponding index, but simply replicate its performance. They don't try to beat the market, they try to be the market.\citep{ref4}
+
 
 \subsection{Stochastic Volatility Models}
 \subsection{Heston Model}
 The Heston model is a Stochastic Volatility Model introduced in 1993. Developed by Steven Heston, this model describes the evolution of volatility of the asset. It assumes that the volatility follows a random process. Hence, it is not a deterministic model but rather a stochastic model.
 The price dynamics of this model are given by
 \begin{equation}
-dS(t) = (r- q)S(t)dt + \sigma(t)S(t)dW^S(t)
+dS(t) = (r- q)S(t)dt + \sigma(t)S(t)dW^S(t)In the simplest terms, Exchange Traded Funds (ETFs) are funds that track indexes like the NASDAQ-100 Index, S&P 500, Dow Jones, etc. When you buy shares of an ETF, you are buying shares of a portfolio that tracks the yield and return of its native index. The main difference between ETFs and other types of index funds is that ETFs don't try to outperform their corresponding index, but simply replicate its performance. They don't try to beat the market, they try to be the market.
+
+Read more: http://www.nasdaq.com/investing/etfs/what-are-ETFs.aspx#ixzz4fDuZrPER
 \end{equation}
 \begin{equation}
 d\sigma(t) = \kappa(\theta-V(t))d(t) + \gamma\v(t)dW^\sigma(t)
@@ -69,10 +72,10 @@ where
     A(u,t) = iulog(S_t)
 \end{equation}
 \begin{equation}
-    B(u,t) = \frac{a}{\sigma^2}((x_j+d_j)t - (2log(x_x)) )
+    B(u,t) = \frac{\kappa\theta}{\sigma^2}((x_j+d_j)t - (2log(x_x)) )
 \end{equation}
 \begin{equation}
-    C(u,t) = \frac{vt(xj+dj)}{\sigma^2} (\frac{1-e^{d_j t}}{ 1-g_je^{d_j t}})
+    C(u,t) = \frac{v_t(xj+dj)}{\sigma^2} (\frac{1-e^{d_j t}}{ 1-g_je^{d_j t}})
 \end{equation}
 \begin{equation}
     x_j = \kappa-\rho\sigma-\rho\sigma ui
@@ -86,6 +89,10 @@ where
 \begin{equation}
     g_j = \frac{x_j + d_j}{x_j - d_j}
 \end{equation}
+
+The above characteristic function has been coded in Python to help us in our research.
+
+For our experiments, we have solved the following optimization problem. Here $v_t$ is the instantaneous volatility. $\kappa$ is the rate of mean reversion of the instantaneous volatility. It describes the rate at which $v_t$ reverts to $\theta$ where $\theta$ is the long run average price of the volatility. $\sigma$ gives us the volatility of the volatility of the underlying. $\rho$ is the correlation between the spot price of the underlying and the volatility. 
 \subsection{Bates Model}
 The Bates model was introduced by David Bates in 1996. It extends on the Heston SVM by  adding jumps in the price process of the underlying asset. 
 \subsection{Option Pricing}
@@ -94,9 +101,9 @@ In modern financial analysis, the Black Scholes equation is an extremely well kn
 \subsection{Need for Calibration and Problem Formulation}
 The need for developing stochastic volatility models and SV models with jumps comes from the need to fit market-available data in a better manner. Model calibration is the process of fitting a given model to available market data. Calibration methods generally employ optimization techniques which, given a set of parameters, obtain parameters that best fit and describe the observable market prices. The closer a given model gets to market data, the better its chances are to be used for risk and portfolio management. 
 
-For our experiments, we have solved the following optimization problem. 
+
 \begin{equation}
-    
+    \min_{v_{0},\kappa,\theta,\sigma,\rho}\frac{1}{N}\sum_{i}^{N}\big(\sigma_{imp}^{market}\big(t_{i},K_{i},m\big) - \sigma_{imp}^{model}\big(t_{i},K_{i},m\big)\big)^2
 \end{equation}
 
 //Insert method here from `Implementation strategy` section of paper
@@ -129,7 +136,7 @@ Downloaded from the delayed quotes table of the Chicago Board Options Exchange (
 
 \section{Results}
 \subsection{Calibration Results for Heston Model}
-The Heston Model has 5 parameters we must estimate: $\kappa, \sigma, \theta, \rho$ and long run variance. Here, we have used Monte Carlo simulation to calibrate our data to get parameters. We than analyze the calibration parameters on each LETFs and calculate the errors in volatility and prices for these LETFs....
+The Heston Model has 5 parameters we must estimate: $\kappa, \sigma, \theta, \rho$ and $v_t$. Here, we have used Monte Carlo simulation to calibrate our data to get parameters. We than analyze the calibration parameters on each LETFs and calculate the errors in volatility and prices for these LETFs....
 //Here we explain results of calibrated parameters
 
 //Table with calibrated parameters along with price and vol errors
@@ -149,4 +156,5 @@ The Heston Model has 5 parameters we must estimate: $\kappa, \sigma, \theta, \rh
 \citep{ref1}
 \citep{ref2}
 \citep{ref3}
+\citep{ref4}
 \end{document}
