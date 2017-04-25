@@ -1,0 +1,152 @@
+\documentclass{article}
+% \documentclass{report}
+\usepackage[utf8]{inputenc}
+
+\title{Price Dynamics and Option Valuation of Leveraged Exchange Traded Funds}
+\author{Siddharth Mantri, Manan Raval, Sanket Sojitra}
+\date{May 2017}
+
+\usepackage{tikz}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{tabu}
+\usepackage[A4, margin=1in]{geometry}
+\usepackage{hyperref, bookmark}
+\usepackage{tikz}
+\setlength{\parindent}{0}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+ We know that S&P500 is the most actively traded derivative for ETFs. We price the options written on leveraged and inverse leveraged Exchange Traded Funds that track the S&P500 using the fast Fourier Transform method. We perform the calibration and error analysis on these LETFs using the Heston Model to calculate the parameters. These calibrated parameters are analyzed as we check Heston Model's efficiency. With the intention to find the parameters by adding a jump to the Heston Model, we perform the calibration and error analysis on the Bates Jump Diffusion Model. Overall, we compare the results given by the Heston Stochastic Volatility model and the Bates Stochastic Volatility Jump model and try to understand their behavior.     
+\end{abstract}
+\cleardoublepage
+\pdfbookmark[section]{\contentsname}{toc}
+\tableofcontents
+\cleardoublepage
+\section{Introduction}
+\subsection{Motivation}
+In past, the investors who wanted to leverage the returns had to either buy or sell options or futures contract in order to accomplish this objective. This is where the need of LETFs came into existence. The LETFs are aimed to track the multiple daily returns of an underlying asset. We consider LETFs tracking the S&P500 since they are the most traded LETFs.  For S&P500 index, we have a range of multiples available vary from -3 to +3. In the interesting work of Jośe Da Fonseca and Yahua Xu(2015), authors develop an empirical analysis of options written on LETFs related to the S&P500 index ( from -3 to +3). They successfully calibrated analysis on pricing errors as well as the parameters provided by different calibrations. they concluded that the Heston model works efficiently, except for the options written on LETF with multiple -3. We tried to replicate this work with an intention to check the efficiency of Heston when jumps are added.
+
+\subsection{Aim of the Project}
+Our aim is to conduct an analysis on options written on LETFs related to S&P500 index. First, we calibrate the Heston (1993) model on a complete set of option prices on LETFs for range of multiples from -3 to +3. We perform error analysis on these LETFs to check the efficiency of the Heston model. After getting proper results, we added jumps to the Heston model to find the parameters and performed calibration and error analysis on the Bates Jump Diffusion model. Lastly, we try to compare and understand the results of both the models.
+\newline\newline
+
+The paper is organized as follows. First we give an insight about the concepts we have used in our work. in the second section we discuss our calibration strategy. Then we discuss our experiments where we show the data-set and method description analysis. Finally we show our empirical results and show the plots to compare the efficiency of Heston model with and without jumps.
+
+\section{Basic Concepts}
+\subsection{Exchange Traded Funds and Leveraged ETFs}
+An Exchange Traded Fund (ETF) is a security that is designed to track an index. Unlike mutual funds, an ETF is traded like common stock on a stock exchange. \citep{ref2}
+
+\subsection{Stochastic Volatility Models}
+\subsection{Heston Model}
+The Heston model is a Stochastic Volatility Model introduced in 1993. Developed by Steven Heston, this model describes the evolution of volatility of the asset. It assumes that the volatility follows a random process. Hence, it is not a deterministic model but rather a stochastic model.
+The price dynamics of this model are given by
+\begin{equation}
+dS(t) = (r- q)S(t)dt + \sigma(t)S(t)dW^S(t)
+\end{equation}
+\begin{equation}
+d\sigma(t) = \kappa(\theta-V(t))d(t) + \gamma\v(t)dW^\sigma(t)
+\end{equation}
+\begin{equation}
+Cov[dW^S(t), dW^\sigma(t)] = \rho dt
+\end{equation}
+The Heston Model characteristic function is given by
+\begin{equation}
+    \phi(u,t) = E[e^{(iulog(S(t)))}|S_{0}, \sigma^2]
+\end{equation}
+\begin{equation}
+    = e^{A(u,t)+B(u,t)+C(u,t)}
+\end{equation}
+where
+\begin{equation}
+    A(u,t) = iulog(S_t)
+\end{equation}
+\begin{equation}
+    B(u,t) = \frac{a}{\sigma^2}((x_j+d_j)t - (2log(x_x)) )
+\end{equation}
+\begin{equation}
+    C(u,t) = \frac{vt(xj+dj)}{\sigma^2} (\frac{1-e^{d_j t}}{ 1-g_je^{d_j t}})
+\end{equation}
+\begin{equation}
+    x_j = \kappa-\rho\sigma-\rho\sigma ui
+\end{equation}
+\begin{equation}
+    d_j = x_{j}^2 - \sigma^2(ui - u^2)
+\end{equation}
+\begin{equation}
+    x_x = \frac{ 1-(g_j e^{d_j t})}{ 1-g_j}
+\end{equation}
+\begin{equation}
+    g_j = \frac{x_j + d_j}{x_j - d_j}
+\end{equation}
+\subsection{Bates Model}
+The Bates model was introduced by David Bates in 1996. It extends on the Heston SVM by  adding jumps in the price process of the underlying asset. 
+\subsection{Option Pricing}
+In modern financial analysis, the Black Scholes equation is an extremely well known and widely used method of pricing financial assets, especially in pricing options. 
+\section{Model Calibration}
+\subsection{Need for Calibration and Problem Formulation}
+The need for developing stochastic volatility models and SV models with jumps comes from the need to fit market-available data in a better manner. Model calibration is the process of fitting a given model to available market data. Calibration methods generally employ optimization techniques which, given a set of parameters, obtain parameters that best fit and describe the observable market prices. The closer a given model gets to market data, the better its chances are to be used for risk and portfolio management. 
+
+For our experiments, we have solved the following optimization problem. 
+\begin{equation}
+    
+\end{equation}
+
+//Insert method here from `Implementation strategy` section of paper
+\section{Experiment}
+\subsection{Dataset Description}
+For this experiment, we have a rich dataset of 6 Leveraged ETFs tracking the S&P 500. The dataset is described in the table below. 
+\newline\newline
+ // insert table here
+\newline\newline
+Downloaded from the delayed quotes table of the Chicago Board Options Exchange (CBOE), we conducted the following steps for each LETF. 
+
+\begin{enumerate}
+    \item Download Options and LEAPs data from CBOE
+    \item Clean out LEAPs and options which have a bid of less than 0.5
+    \item The data downloaded gave us only the Ticker, Option type, bid and ask prices and the current stock price of the underlying. 
+    \item Added the following data:
+    \begin{itemize}
+         \item Strike, by getting the data from the ticker symbol.
+         \item Maturity date, again by deciphering the ticker symbol for an option
+         \item Moneyness, calculated using Strike/Stock
+         \item Market price, calculated using the average of the given bid and ask prices
+    \end{itemize}
+    \item The data was then converted to a dictionary format to be used with ease in our Python code
+\end{enumerate}
+
+\subsection{Method}
+
+//pseudocode for Heston, Bates and Calibration
+//No need for plot generation pseudo code
+
+\section{Results}
+\subsection{Calibration Results for Heston Model}
+The Heston Model has 5 parameters we must estimate: $\kappa, \sigma, \theta, \rho$ and long run variance. Here, we have used Monte Carlo simulation to calibrate our data to get parameters. We than analyze the calibration parameters on each LETFs and calculate the errors in volatility and prices for these LETFs....
+//Here we explain results of calibrated parameters
+
+//Table with calibrated parameters along with price and vol errors
+
+//Images of all results along with errors
+
+//explain results and expected numbers and unexpected numbers
+
+\subsection{Calibration Results for Bates Model}
+\section{Conclusion}
+%\section{Bibliography}
+\section{Code}
+
+
+\bibliographystyle{plain}
+\bibliography{references}
+\citep{ref1}
+\citep{ref2}
+\citep{ref3}
+\end{document}
