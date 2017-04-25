@@ -43,6 +43,11 @@ The paper is organized as follows. First we give an insight about the concepts w
 \section{Basic Concepts}
 \subsection{Exchange Traded Funds and Leveraged ETFs}
 An Exchange Traded Fund (ETF) is a security that is designed to track an index. Unlike mutual funds, an ETF is traded like common stock on a stock exchange.\citep{ref2} In the simplest terms, Exchange Traded Funds (ETFs) are funds that track indexes like the NASDAQ-100 Index, S&P 500, Dow Jones, etc. When you buy shares of an ETF, you are buying shares of a portfolio that tracks the yield and return of its native index. The main difference between ETFs and other types of index funds is that ETFs don't try to outperform their corresponding index, but simply replicate its performance. They don't try to beat the market, they try to be the market.\citep{ref4}
+\newlin\newline
+
+
+A leveraged exchange-traded fund (ETF) is a fund that uses financial derivatives and debt to amplify the returns of an underlying index. Leveraged ETFs are available for most indexes, such as the Nasdaq 100 and the Dow Jones Industrial Average. These funds aim to keep a constant amount of leverage during the investment time frame, such as a 2:1 or 3:1 ratio. Leveraged ETFs are typically used by traders who wish to speculate on an index, or to take advantage of the index's short-term momentum. Due to the high-risk, high-cost structure of leveraged ETFs, they are rarely used as long-term investments. In many cases, traders hold positions in leveraged ETFs for just a few days or less. Many leveraged ETFs have expense ratios of 1 percent or more.\citep{ref5}
+Certainly, the most traded LETFs are those tracking the S&P500. For this index a large range of multiples is available. From a multiple of +1, whose ticker is SPY, that tracks the S&P500 and started to be traded in 1993 to multiple as small as -3 or as large as +3, LETFs related to this index constitute an active market. \citep{ref3}
 
 
 \subsection{Stochastic Volatility Models}
@@ -50,9 +55,7 @@ An Exchange Traded Fund (ETF) is a security that is designed to track an index. 
 The Heston model is a Stochastic Volatility Model introduced in 1993. Developed by Steven Heston, this model describes the evolution of volatility of the asset. It assumes that the volatility follows a random process. Hence, it is not a deterministic model but rather a stochastic model.
 The price dynamics of this model are given by
 \begin{equation}
-dS(t) = (r- q)S(t)dt + \sigma(t)S(t)dW^S(t)In the simplest terms, Exchange Traded Funds (ETFs) are funds that track indexes like the NASDAQ-100 Index, S&P 500, Dow Jones, etc. When you buy shares of an ETF, you are buying shares of a portfolio that tracks the yield and return of its native index. The main difference between ETFs and other types of index funds is that ETFs don't try to outperform their corresponding index, but simply replicate its performance. They don't try to beat the market, they try to be the market.
-
-Read more: http://www.nasdaq.com/investing/etfs/what-are-ETFs.aspx#ixzz4fDuZrPER
+dS(t) = (r- q)S(t)dt + \sigma(t)S(t)dW^S(t)
 \end{equation}
 \begin{equation}
 d\sigma(t) = \kappa(\theta-V(t))d(t) + \gamma\v(t)dW^\sigma(t)
@@ -95,24 +98,91 @@ The above characteristic function has been coded in Python to help us in our res
 For our experiments, we have solved the following optimization problem. Here $v_t$ is the instantaneous volatility. $\kappa$ is the rate of mean reversion of the instantaneous volatility. It describes the rate at which $v_t$ reverts to $\theta$ where $\theta$ is the long run average price of the volatility. $\sigma$ gives us the volatility of the volatility of the underlying. $\rho$ is the correlation between the spot price of the underlying and the volatility. 
 \subsection{Bates Model}
 The Bates model was introduced by David Bates in 1996. It extends on the Heston SVM by  adding jumps in the price process of the underlying asset. 
+
+
+//TODO: Need to fix equation
+The price dynamics of this model are given by
+\begin{equation}
+dS_t = (r- q)S_t dt + \sigma_t S_t dW^{S_t} +J_t S_t N_t
+\end{equation}
+\begin{equation}
+d\sigma(t) = \kappa(\theta-V(t))d(t) + \gamma\v(t)dW^\sigma(t)
+\end{equation}
+\begin{equation}
+Cov[dW^S(t), dW^\sigma(t)] = \rho dt
+\end{equation}
+The Heston Model characteristic function is given by
+\begin{equation}
+    \phi(u,t) = E[e^{(iulog(S(t)))}|S_{0}, \sigma^2]
+\end{equation}
+\begin{equation}
+    = e^{A(u,t)+B(u,t)+C(u,t)+D(u,t)}
+\end{equation}
+where
+\begin{equation}
+    A(u,t) = iulog(S_t)
+\end{equation}
+\begin{equation}
+    B(u,t) = \frac{\kappa\theta}{\sigma^2}((x_j+d_j)t - (2log(x_x)) )
+\end{equation}
+\begin{equation}
+    C(u,t) = \frac{v_t(xj+dj)}{\sigma^2} (\frac{1-e^{d_j t}}{ 1-g_je^{d_j t}})
+\end{equation}
+\begin{equation}
+    D(u,t) = (-1\lambda \mu_j i u t)+((\lambda t)((1+\mu_j)^{iu})(e^{\frac{1}{2} \sigma_j ^2 iu(iu-1)}-1)) 
+\end{equation}
+\begin{equation}
+    x_j = \kappa-\rho\sigma-\rho\sigma ui
+\end{equation}
+\begin{equation}
+    d_j = x_{j}^2 - \sigma^2(ui - u^2)
+\end{equation}
+\begin{equation}
+    x_x = \frac{ 1-(g_j e^{d_j t})}{ 1-g_j}
+\end{equation}
+\begin{equation}
+    g_j = \frac{x_j + d_j}{x_j - d_j}
+\end{equation}
+
+In the Bates model, the original parameters of the Heston SV model behave in the same way. However, this model adds three new parameters, namely, $\lambda$, $\mu_j$ and $\sigma_j$. These three parameters control the following
+
 \subsection{Option Pricing}
 In modern financial analysis, the Black Scholes equation is an extremely well known and widely used method of pricing financial assets, especially in pricing options. 
 \section{Model Calibration}
 \subsection{Need for Calibration and Problem Formulation}
 The need for developing stochastic volatility models and SV models with jumps comes from the need to fit market-available data in a better manner. Model calibration is the process of fitting a given model to available market data. Calibration methods generally employ optimization techniques which, given a set of parameters, obtain parameters that best fit and describe the observable market prices. The closer a given model gets to market data, the better its chances are to be used for risk and portfolio management. 
-
+\newline\newline
+//TODO:Insert method here from `Implementation strategy` section of paper
+For each LETF and leveraged ratio m, we calibrate the following volatility optimisation model.
 
 \begin{equation}
     \min_{v_{0},\kappa,\theta,\sigma,\rho}\frac{1}{N}\sum_{i}^{N}\big(\sigma_{imp}^{market}\big(t_{i},K_{i},m\big) - \sigma_{imp}^{model}\big(t_{i},K_{i},m\big)\big)^2
 \end{equation}
+where $\sigma_{imp}^{market}\big(t_{i},K_{i},m\big)$ is the market implied volatility for the option with maturity $t_i$, strike $K_i$ and leverage ratio $m$. The number of options is given by N. Similarly, $\sigma_{imp}^{model}\big(t_{i},K_{i},m\big)$ is the model implied volatility. We also report the error in option pricing, which is given by
+\begin{equation}
+    \min_{v_{0},\kappa,\theta,\sigma,\rho}\frac{1}{N}\sum_{i}^{N}\big(c_{imp}^{market}\big(t_{i},K_{i},m\big) - c_{imp}^{model}\big(t_{i},K_{i},m\big)\big)^2
+\end{equation}
+where $c_{imp}^{market}\big(t_{i},K_{i},m\big)$ is the market price with maturity $t_i$, strike $K_i$ and leverage ratio $m$.
 
-//Insert method here from `Implementation strategy` section of paper
 \section{Experiment}
 \subsection{Dataset Description}
 For this experiment, we have a rich dataset of 6 Leveraged ETFs tracking the S&P 500. The dataset is described in the table below. 
-\newline\newline
- // insert table here
-\newline\newline
+
+
+\begin{table}[h!]
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+Tickers & Leverage Ratio & Number of options & Smallest Maturity & Largest Maturity & Moneyness Range \\ \hline
+SPXU & -3 & 330 & 0.024657534 & 1.769863014 & {[}0.05733945, 3.440366972{]} \\ \hline
+SDS & -2 & 352 & 0.016438356 & 1.783561644 & {[}0.07423905, 2.598366741{]} \\ \hline
+SH & -1 & 334 & 0.0219 & 0.769863014 & {[}0.516499283, 1.721664275{]} \\ \hline
+SPY & 1 & 3171 & 0.0054 & 2.695890411 & {[}0.340136054, 1.445578231{]} \\ \hline
+SSO & 2 & 1032 & 0.0198 & 1.7452 & {[}0.357568534, 1.549463647{]} \\ \hline
+UPRO & 3 & 1322 & 0.0082 & 0.778082192 & {[}0.260443796, 1.458485259{]} \\ \hline
+\end{tabular}
+\end{table}
+
+
 Downloaded from the delayed quotes table of the Chicago Board Options Exchange (CBOE), we conducted the following steps for each LETF. 
 
 \begin{enumerate}
@@ -131,19 +201,19 @@ Downloaded from the delayed quotes table of the Chicago Board Options Exchange (
 
 \subsection{Method}
 
-//pseudocode for Heston, Bates and Calibration
-//No need for plot generation pseudo code
+//TODO:pseudocode for Heston, Bates and Calibration
+//TODO:No need for plot generation pseudo code
 
 \section{Results}
 \subsection{Calibration Results for Heston Model}
 The Heston Model has 5 parameters we must estimate: $\kappa, \sigma, \theta, \rho$ and $v_t$. Here, we have used Monte Carlo simulation to calibrate our data to get parameters. We than analyze the calibration parameters on each LETFs and calculate the errors in volatility and prices for these LETFs....
-//Here we explain results of calibrated parameters
+//TODO:Here we explain results of calibrated parameters
 
-//Table with calibrated parameters along with price and vol errors
+//TODO:Table with calibrated parameters along with price and vol errors
 
-//Images of all results along with errors
+//TODO:Images of all results along with errors
 
-//explain results and expected numbers and unexpected numbers
+//TODO:explain results and expected numbers and unexpected numbers
 
 \subsection{Calibration Results for Bates Model}
 \section{Conclusion}
@@ -157,4 +227,5 @@ The Heston Model has 5 parameters we must estimate: $\kappa, \sigma, \theta, \rh
 \citep{ref2}
 \citep{ref3}
 \citep{ref4}
+\citep{ref5}
 \end{document}
