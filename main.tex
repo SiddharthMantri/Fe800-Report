@@ -17,6 +17,15 @@
 \usepackage{hyperref, bookmark}
 \usepackage{tikz}
 \setlength{\parindent}{0}
+\documentclass{article}
+\usepackage{titlesec}
+
+\setcounter{secnumdepth}{4}
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
 
 \begin{document}
@@ -37,7 +46,6 @@ In past, the investors who wanted to leverage the returns had to either buy or s
 \subsection{Aim of the Project}
 Our aim is to conduct an analysis on options written on LETFs related to S&P500 index. First, we calibrate the Heston (1993) model on a complete set of option prices on LETFs for range of multiples from -3 to +3. We perform error analysis on these LETFs to check the efficiency of the Heston model. After getting proper results, we added jumps to the Heston model to find the parameters and performed calibration and error analysis on the Bates Jump Diffusion model. Lastly, we try to compare and understand the results of both the models.
 \newline\newline
-
 The paper is organized as follows. First we give an insight about the concepts we have used in our work. in the second section we discuss our calibration strategy. Then we discuss our experiments where we show the data-set and method description analysis. Finally we show our empirical results and show the plots to compare the efficiency of Heston model with and without jumps.
 
 \section{Basic Concepts}
@@ -51,6 +59,14 @@ Certainly, the most traded LETFs are those tracking the S&P500. For this index a
 
 
 \subsection{Stochastic Volatility Models}
+A statistical method in mathematical finance in which volatility and codependence between variables is allowed to fluctuate over time rather than remain constant. "Stochastic" in this sense refers to successive values of a random variable that are not independent. Stochastic volatility is typically analyzed through sophisticated models, which became increasingly useful and accurate as computer technology improved. \citep{ref8}
+\newline
+
+Stochastic volatility models are those in which the variance of a stochastic process is itself randomly distributed. They are used in the field of mathematical finance to evaluate derivative securities, such as options. The name derives from the models' treatment of the underlying security's volatility as a random process, governed by state variables such as the price level of the underlying security, the tendency of volatility to revert to some long-run mean value, and the variance of the volatility process itself, among others. \citep{ref7}
+\newline
+
+Examples of stochastic volatility models include the Heston model, the SABR model, the Chen model and the GARCH model.
+
 \subsection{Heston Model}
 The Heston model is a Stochastic Volatility Model introduced in 1993. Developed by Steven Heston, this model describes the evolution of volatility of the asset. It assumes that the volatility follows a random process. Hence, it is not a deterministic model but rather a stochastic model.
 The price dynamics of this model are given by
@@ -100,7 +116,6 @@ For our experiments, we have solved the following optimization problem. Here $v_
 The Bates model was introduced by David Bates in 1996. It extends on the Heston SVM by  adding jumps in the price process of the underlying asset. 
 
 
-//TODO: Need to fix equation
 The price dynamics of this model are given by
 \begin{equation}
 dS_t = (r- q)S_t dt + \sigma_t S_t dW^{S_t} +J_t S_t N_t
@@ -129,7 +144,7 @@ where
     C(u,t) = \frac{v_t(xj+dj)}{\sigma^2} (\frac{1-e^{d_j t}}{ 1-g_je^{d_j t}})
 \end{equation}
 \begin{equation}
-    D(u,t) = (-1\lambda \mu_j i u t)+((\lambda t)((1+\mu_j)^{iu})(e^{\frac{1}{2} \sigma_j ^2 iu(iu-1)}-1)) 
+    D(u,t) = (-\lambda \mu_j i u t)+\lambda t(1+\mu_j)^{iu} e^{\frac{1}{2} \sigma_j ^2 iu(iu-1)}-1
 \end{equation}
 \begin{equation}
     x_j = \kappa-\rho\sigma-\rho\sigma ui
@@ -147,12 +162,17 @@ where
 In the Bates model, the original parameters of the Heston SV model behave in the same way. However, this model adds three new parameters, namely, $\lambda$, $\mu_j$ and $\sigma_j$. These three parameters control the following
 
 \subsection{Option Pricing}
-In modern financial analysis, the Black Scholes equation is an extremely well known and widely used method of pricing financial assets, especially in pricing options. 
+In modern financial analysis, the Black Scholes equation is an extremely well known and widely used method of pricing financial assets, especially in pricing options. Before venturing into the world of trading options, investors should have a good understanding of the factors that determine the value of an option. These include the current stock price, the intrinsic value, time to expiration or the time value, volatility, interest rates and cash dividends paid. Let's start with the primary drivers of the price of an option: current stock price, intrinsic value, time to expiration or time value, and volatility. The current stock price is fairly obvious. The movement of the price of the stock up or down has a direct - although not equal - effect on the price of the option. As the price of a stock rises, the more likely the price of a call option will rise and the price of a put option will fall. If the stock price goes down, then the reverse will most likely happen to the price of the calls and puts. \citep{ref9} 
+\newline\newline
+Given the success of the Black-Scholes model in parsimoniously describing market options prices, it’s not immediately obvious what the benefits of making such a modelling choice might be. Stochastic volatility models are useful because they explain in a self consistent way why it is that options with different strikes and expiration's have different Black-Scholes implied volatilities (“implied volatilities” from now on) – the “volatility smile”. In particular, traders who use the BlackScholes model to hedge must continuously change the volatility assumption in order to match market prices. Their hedge ratios change accordingly in an uncontrolled way. More interestingly for us, the prices of exotic options given by models based on Black-Scholes assumptions can be wildly wrong and dealers in such options are motivated to find models which can take the volatility smile into account when pricing these.\citep{ref6} Hence we can say that using a Stochastic Volatility model like the Heston Model can be beneficial and this is the reason we are trying to track its efficiency with jumps
+
+
+
 \section{Model Calibration}
 \subsection{Need for Calibration and Problem Formulation}
 The need for developing stochastic volatility models and SV models with jumps comes from the need to fit market-available data in a better manner. Model calibration is the process of fitting a given model to available market data. Calibration methods generally employ optimization techniques which, given a set of parameters, obtain parameters that best fit and describe the observable market prices. The closer a given model gets to market data, the better its chances are to be used for risk and portfolio management. 
 \newline\newline
-//TODO:Insert method here from `Implementation strategy` section of paper
+
 For each LETF and leveraged ratio m, we calibrate the following volatility optimisation model.
 
 \begin{equation}
@@ -167,21 +187,6 @@ where $c_{imp}^{market}\big(t_{i},K_{i},m\big)$ is the market price with maturit
 \section{Experiment}
 \subsection{Dataset Description}
 For this experiment, we have a rich dataset of 6 Leveraged ETFs tracking the S&P 500. The dataset is described in the table below. 
-
-
-\begin{table}[h!]
-\begin{tabular}{|l|l|l|l|l|l|}
-\hline
-Tickers & Leverage Ratio & Number of options & Smallest Maturity & Largest Maturity & Moneyness Range \\ \hline
-SPXU & -3 & 330 & 0.024657534 & 1.769863014 & {[}0.05733945, 3.440366972{]} \\ \hline
-SDS & -2 & 352 & 0.016438356 & 1.783561644 & {[}0.07423905, 2.598366741{]} \\ \hline
-SH & -1 & 334 & 0.0219 & 0.769863014 & {[}0.516499283, 1.721664275{]} \\ \hline
-SPY & 1 & 3171 & 0.0054 & 2.695890411 & {[}0.340136054, 1.445578231{]} \\ \hline
-SSO & 2 & 1032 & 0.0198 & 1.7452 & {[}0.357568534, 1.549463647{]} \\ \hline
-UPRO & 3 & 1322 & 0.0082 & 0.778082192 & {[}0.260443796, 1.458485259{]} \\ \hline
-\end{tabular}
-\end{table}
-
 
 Downloaded from the delayed quotes table of the Chicago Board Options Exchange (CBOE), we conducted the following steps for each LETF. 
 
@@ -198,6 +203,19 @@ Downloaded from the delayed quotes table of the Chicago Board Options Exchange (
     \end{itemize}
     \item The data was then converted to a dictionary format to be used with ease in our Python code
 \end{enumerate}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+Tickers & Leverage Ratio & Number of options & Smallest Maturity & Largest Maturity & Moneyness Range \\ \hline
+SPXU & -3 & 330 & 0.024657534 & 1.769863014 & {[}0.05733945, 3.440366972{]} \\ \hline
+SDS & -2 & 352 & 0.016438356 & 1.783561644 & {[}0.07423905, 2.598366741{]} \\ \hline
+SH & -1 & 334 & 0.0219 & 0.769863014 & {[}0.516499283, 1.721664275{]} \\ \hline
+SPY & 1 & 3171 & 0.0054 & 2.695890411 & {[}0.340136054, 1.445578231{]} \\ \hline
+SSO & 2 & 1032 & 0.0198 & 1.7452 & {[}0.357568534, 1.549463647{]} \\ \hline
+UPRO & 3 & 1322 & 0.0082 & 0.778082192 & {[}0.260443796, 1.458485259{]} \\ \hline
+\end{tabular}
+\end{table}
 
 \subsection{Method}
 
@@ -206,7 +224,7 @@ Downloaded from the delayed quotes table of the Chicago Board Options Exchange (
 
 \section{Results}
 \subsection{Calibration Results for Heston Model}
-The Heston Model has 5 parameters we must estimate: $\kappa, \sigma, \theta, \rho$ and $v_t$. Here, we have used Monte Carlo simulation to calibrate our data to get parameters. We than analyze the calibration parameters on each LETFs and calculate the errors in volatility and prices for these LETFs....
+The Heston Model has 5 parameters we must estimate: $\kappa, \sigma, \theta, \rho$ and $v_t$. Here, we have used Monte Carlo simulation to calibrate our data to get parameters. We than analyze the calibration parameters on each LETFs and calculated the errors in volatility and prices for these LETFs....
 //TODO:Here we explain results of calibrated parameters
 
 //TODO:Table with calibrated parameters along with price and vol errors
@@ -216,6 +234,7 @@ The Heston Model has 5 parameters we must estimate: $\kappa, \sigma, \theta, \rh
 //TODO:explain results and expected numbers and unexpected numbers
 
 \subsection{Calibration Results for Bates Model}
+
 \section{Conclusion}
 %\section{Bibliography}
 \section{Code}
@@ -228,4 +247,9 @@ The Heston Model has 5 parameters we must estimate: $\kappa, \sigma, \theta, \rh
 \citep{ref3}
 \citep{ref4}
 \citep{ref5}
+\citep{ref6}
+\citep{ref7}
+\citep{ref8}
+\citep{ref9}
+
 \end{document}
