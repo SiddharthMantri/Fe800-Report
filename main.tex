@@ -65,11 +65,31 @@ A statistical method in mathematical finance in which volatility and codependenc
 Stochastic volatility models are those in which the variance of a stochastic process is itself randomly distributed. They are used in the field of mathematical finance to evaluate derivative securities, such as options. The name derives from the models' treatment of the underlying security's volatility as a random process, governed by state variables such as the price level of the underlying security, the tendency of volatility to revert to some long-run mean value, and the variance of the volatility process itself, among others. \citep{ref7}
 \newline
 
-Examples of stochastic volatility models include the Heston model, the SABR model, the Chen model and the GARCH model.
+The advantage of Stochastic Volatility model like Heston over something more traditional like the Black Scholes model is that the SV models introduce more random factors. In BSM, there is only one random factor, i.e, Volatility.  Given a short period of time, the Black Scholes model is very good at predicting local volatility. However, as time periods increase, the model begins to break as a single random factor cannot predict randomness over such a large period. The advantage of the Heston SV model is that it takes into account multiple factors. 
+\newline
 
+SV models generally model stock prices as follows:
+
+\begin{equation}
+    dS_t = r_t S_t dt + \sigma_t S_t dW_t
+\end{equation}
+$\sigma$ here depicts volatility and is itself a random process. It is modelled as:
+
+\begin{equation}
+    d\sigma_t = \lambda_t dt + \zeta_t dW^{\sigma}_t
+\end{equation}
+\newline
+
+$W$ and $W^{\sigma}$ have $\rho$ correlation and the coefficents $\lambda$ and $\zeta$ are determined by the model parameters and are generally obtained by calibration. 
+\newline
+
+Examples of stochastic volatility models include the Heston model, the SABR model, the Chen model and the GARCH model.
+\newline
+\cleardoublepage
 \subsection{Heston Model}
 The Heston model is a Stochastic Volatility Model introduced in 1993. Developed by Steven Heston, this model describes the evolution of volatility of the asset. It assumes that the volatility follows a random process. Hence, it is not a deterministic model but rather a stochastic model.
 The price dynamics of this model are given by
+
 \begin{equation}
 dS(t) = (r- q)S(t)dt + \sigma(t)S(t)dW^S(t)
 \end{equation}
@@ -112,6 +132,15 @@ where
 The above characteristic function has been coded in Python to help us in our research.
 
 For our experiments, we have solved the following optimization problem. Here $v_t$ is the instantaneous volatility. $\kappa$ is the rate of mean reversion of the instantaneous volatility. It describes the rate at which $v_t$ reverts to $\theta$ where $\theta$ is the long run average price of the volatility. $\sigma$ gives us the volatility of the volatility of the underlying. $\rho$ is the correlation between the spot price of the underlying and the volatility. 
+
+The Heston model has some underlying advantages: 
+\begin{itemize}
+    \item The volatility is mean reverting
+    \item It takes into account leverage effect between the returns and the volatility.
+\end{itemize}
+
+The model captures volatility clustering, mean reversion and displays heavier tails. However, it fails to capture random fluctuations in the market. An example could be a factor that causes the market to crash. The prices of the model are also very sensitive to the calibrated parameters. 
+
 \subsection{Bates Model}
 The Bates model was introduced by David Bates in 1996. It extends on the Heston SVM by  adding jumps in the price process of the underlying asset. 
 
@@ -184,9 +213,26 @@ where $\sigma_{imp}^{market}\big(t_{i},K_{i},m\big)$ is the market implied volat
 \end{equation}
 where $c_{imp}^{market}\big(t_{i},K_{i},m\big)$ is the market price with maturity $t_i$, strike $K_i$ and leverage ratio $m$.
 
+\cleardoublepage
 \section{Experiment}
 \subsection{Dataset Description}
 For this experiment, we have a rich dataset of 6 Leveraged ETFs tracking the S&P 500. The dataset is described in the table below. 
+
+\begin{table}[h!]
+\centering
+\caption{Data Description}
+\label{my-label}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+Tickers & Leverage Ratio & Number of options & Smallest Maturity & Largest Maturity & Moneyness Range \\ \hline
+SPXU & -3 & 330 & 0.024657534 & 1.769863014 & {[}0.05733945, 3.440366972{]} \\ \hline
+SDS & -2 & 352 & 0.016438356 & 1.783561644 & {[}0.07423905, 2.598366741{]} \\ \hline
+SH & -1 & 334 & 0.0219 & 0.769863014 & {[}0.516499283, 1.721664275{]} \\ \hline
+SPY & 1 & 3171 & 0.0054 & 2.695890411 & {[}0.340136054, 1.445578231{]} \\ \hline
+SSO & 2 & 1032 & 0.0198 & 1.7452 & {[}0.357568534, 1.549463647{]} \\ \hline
+UPRO & 3 & 1322 & 0.0082 & 0.778082192 & {[}0.260443796, 1.458485259{]} \\ \hline
+\end{tabular}
+\end{table}
 
 Downloaded from the delayed quotes table of the Chicago Board Options Exchange (CBOE), we conducted the following steps for each LETF. 
 
@@ -203,28 +249,34 @@ Downloaded from the delayed quotes table of the Chicago Board Options Exchange (
     \end{itemize}
     \item The data was then converted to a dictionary format to be used with ease in our Python code
 \end{enumerate}
-\begin{table}[h!]
-\centering
-\begin{tabular}{|l|l|l|l|l|l|}
-\hline
-Tickers & Leverage Ratio & Number of options & Smallest Maturity & Largest Maturity & Moneyness Range \\ \hline
-SPXU & -3 & 330 & 0.024657534 & 1.769863014 & {[}0.05733945, 3.440366972{]} \\ \hline
-SDS & -2 & 352 & 0.016438356 & 1.783561644 & {[}0.07423905, 2.598366741{]} \\ \hline
-SH & -1 & 334 & 0.0219 & 0.769863014 & {[}0.516499283, 1.721664275{]} \\ \hline
-SPY & 1 & 3171 & 0.0054 & 2.695890411 & {[}0.340136054, 1.445578231{]} \\ \hline
-SSO & 2 & 1032 & 0.0198 & 1.7452 & {[}0.357568534, 1.549463647{]} \\ \hline
-UPRO & 3 & 1322 & 0.0082 & 0.778082192 & {[}0.260443796, 1.458485259{]} \\ \hline
-\end{tabular}
-\end{table}
+
 
 \subsection{Method}
 
+For us to numerically implement the Heston model, we had to study the paper by Carr and Madan[1999]
 //TODO:pseudocode for Heston, Bates and Calibration
 //TODO:No need for plot generation pseudo code
 
 \section{Results}
 \subsection{Calibration Results for Heston Model}
-The Heston Model has 5 parameters we must estimate: $\kappa, \sigma, \theta, \rho$ and $v_t$. Here, we have used Monte Carlo simulation to calibrate our data to get parameters. We than analyze the calibration parameters on each LETFs and calculated the errors in volatility and prices for these LETFs....
+The Heston Model has 5 parameters we must estimate: $\kappa, \sigma, \theta, \rho$ and $v_t$. We then analyze the calibration parameters on each LETFs and calculated the errors in volatility and prices for these LETFs which is shown in the table below:
+
+\begin{table}[h!]
+\centering
+\caption{Heston Model Calibration Result}
+\label{my-label}
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+\hline
+{Ticker} & {v0} & {$\kappa$}  & {$\theta$}  & {$\sigma$}  & {$\rho$}   & {Volatility Error} & {Price Error} \\ \hline
+\textbf{SPXU}   & 0.414680147 & 2.892590558 & 0.051511783 & 3.545262624 & -1.15E-39    & 0.004218577               & 0.00063749           \\ \hline
+\textbf{SDS}    & 0.334578367 & 0.816575627 & 0.306771304 & 4.511649717 & -0.759914518 & 0.012037415               & 0.000771869          \\ \hline
+\textbf{SH}     & 0.042355185 & 9.852268012 & 0.048968957 & 7.475109789 & -0.041592367 & 0.004040145               & 0.000470654          \\ \hline
+\textbf{SPY}    & 0.188624474 & 0.377395699 & 0.52472413  & 9.999827962 & -0.519070198 & 0.000101711               & 1.71E-05             \\ \hline
+\textbf{SSO}    & 0.220656022 & 1.077617466 & 0.260470715 & 4.721484288 & -0.811187715 & 0.001104727               & 0.000104577          \\ \hline
+\textbf{UPRO}   & 0.138642899 & 0.118229441 & 0.135372546 & 0.87355137  & -0.63976789  & 0.003144009               & 0.000563037          \\ \hline
+\end{tabular}
+\end{table}
+
 //TODO:Here we explain results of calibrated parameters
 
 //TODO:Table with calibrated parameters along with price and vol errors
